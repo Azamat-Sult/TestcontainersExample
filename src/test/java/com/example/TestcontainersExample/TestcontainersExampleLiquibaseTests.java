@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 @Testcontainers
-class TestcontainersExampleSQLScriptTests {
+class TestcontainersExampleLiquibaseTests {
 
 	@Autowired
 	UserRepository userRepository;
@@ -26,15 +26,15 @@ class TestcontainersExampleSQLScriptTests {
 	public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest")
 			.withDatabaseName("postgres")
 			.withUsername("postgres")
-			.withPassword("password")
-			.withInitScript("db/scripts/test.sql");
+			.withPassword("password");
 
 	@DynamicPropertySource
 	static void postgreSQLContainerProperties(DynamicPropertyRegistry registry) {
 		registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
 		registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
 		registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
-		registry.add("spring.liquibase.enabled", () -> "false");
+		registry.add("spring.liquibase.enabled", () -> "true");
+		registry.add("spring.liquibase.change-log", () -> "classpath:db/changelog.xml");
 	}
 
 	@Test
