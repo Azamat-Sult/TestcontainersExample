@@ -1,8 +1,13 @@
 package com.example.TestcontainersExample;
 
+import com.example.TestcontainersExample.Provider.SomeArgumentsProvider;
 import com.example.TestcontainersExample.model.TestUser;
 import com.example.TestcontainersExample.repository.UserRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -38,12 +43,25 @@ class TestcontainersExampleLiquibaseTests {
 	}
 
 	@Test
+	@DisplayName("whenSaveThenLoad")
 	@Transactional
 	void whenSaveThenLoad() {
 		TestUser userToSave = new TestUser(1,"One more user");
 		userRepository.save(userToSave);
 		TestUser userToRead = userRepository.getReferenceById(1L);
 		assertEquals(userToSave, userToRead);
+	}
+
+	@ParameterizedTest
+	@ValueSource(longs = {1L, 2L, 3L})
+	void testWithValueSource(Long number) {
+		assertEquals(number, number);
+	}
+
+	@ParameterizedTest
+	@ArgumentsSource(SomeArgumentsProvider.class)
+	void testWithArgumentsProvider(String argument) {
+		assertEquals(argument, argument);
 	}
 
 }
